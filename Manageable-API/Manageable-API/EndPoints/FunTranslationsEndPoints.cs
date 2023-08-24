@@ -33,6 +33,40 @@ namespace Manageable_API.EndPoints
                 
                 return response;
             });
+
+            app.MapPost("/minion", async (TranslatorFunRequest request) =>
+            {
+                //TODO: adicionar uma comunicação com uma API para fazer o translate sempre pra o inglês
+                HttpClient client = new HttpClient();
+                HttpResponseMessage resp = await client.PostAsJsonAsync("https://api.funtranslations.com/translate/minion", request);
+                string respString = resp.Content.ReadAsStringAsync().Result;
+                TranslatorFunResponse response = new TranslatorFunResponse();
+                if (respString != null)
+                {
+                    response = JsonSerializer.Deserialize<TranslatorFunResponse>(respString);
+                }
+
+                return response;
+            });
+
+            app.MapPost("/groot", async (TranslatorFunRequest request) =>
+            {
+                //TODO: adicionar uma comunicação com uma API para fazer o translate sempre pra o inglês
+                HttpClient client = new HttpClient();
+                HttpResponseMessage resp = await client.PostAsJsonAsync("https://api.funtranslations.com/translate/groot", request);
+                string respString = resp.Content.ReadAsStringAsync().Result;
+                TranslatorFunResponse response = new TranslatorFunResponse();
+                if (respString != null)
+                {
+                    response = JsonSerializer.Deserialize<TranslatorFunResponse>(respString);
+                }
+
+                return response;
+            });
+
+
+
+        
         }
     }
 }
