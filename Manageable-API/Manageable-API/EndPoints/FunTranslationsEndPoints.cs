@@ -1,5 +1,7 @@
 ﻿using Carter;
 using Domain.RequestsClass;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -19,9 +21,17 @@ namespace Manageable_API.EndPoints
                 return Results.Ok(new { descricao = "Faz traduções de diversos tipos doidos.", data_informacao = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") });
             });
 
-            app.MapPost("/mandalorian", async (TranslatorFunRequest request) =>
+            app.MapPost("/mandalorian", async (
+                TranslatorFunRequest request,
+                IValidator<TranslatorFunRequest> validator) =>
             {
                 //TODO: adicionar uma comunicação com uma API para fazer o translate sempre pra o inglês
+                ValidationResult resultValidation = await validator.ValidateAsync(request);
+
+                if (!resultValidation.IsValid)
+                {
+                    return Results.ValidationProblem(resultValidation.ToDictionary());
+                }
                 HttpClient client = new HttpClient();
                 HttpResponseMessage resp = await client.PostAsJsonAsync("https://api.funtranslations.com/translate/mandalorian", request);
                 string respString = resp.Content.ReadAsStringAsync().Result;
@@ -31,7 +41,7 @@ namespace Manageable_API.EndPoints
                     response = JsonSerializer.Deserialize<TranslatorFunResponse>(respString);
                 }
                 
-                return response;
+                return Results.Ok(response);
             });
 
             app.MapPost("/minion", async (TranslatorFunRequest request) =>
