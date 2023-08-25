@@ -2,10 +2,7 @@
 using Domain.RequestsClass;
 using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Manageable_API.EndPoints
 {
@@ -27,7 +24,6 @@ namespace Manageable_API.EndPoints
             {
                 //TODO: adicionar uma comunicação com uma API para fazer o translate sempre pra o inglês
                 ValidationResult resultValidation = await validator.ValidateAsync(request);
-
                 if (!resultValidation.IsValid)
                 {
                     return Results.ValidationProblem(resultValidation.ToDictionary());
@@ -44,9 +40,18 @@ namespace Manageable_API.EndPoints
                 return Results.Ok(response);
             });
 
-            app.MapPost("/minion", async (TranslatorFunRequest request) =>
+            app.MapPost("/minion", async (
+                TranslatorFunRequest request,
+                IValidator<TranslatorFunRequest> validator) =>
             {
                 //TODO: adicionar uma comunicação com uma API para fazer o translate sempre pra o inglês
+
+                ValidationResult resultValidation = await validator.ValidateAsync(request);
+                if (!resultValidation.IsValid)
+                {
+                    return Results.ValidationProblem(resultValidation.ToDictionary());
+                }
+
                 HttpClient client = new HttpClient();
                 HttpResponseMessage resp = await client.PostAsJsonAsync("https://api.funtranslations.com/translate/minion", request);
                 string respString = resp.Content.ReadAsStringAsync().Result;
@@ -56,12 +61,21 @@ namespace Manageable_API.EndPoints
                     response = JsonSerializer.Deserialize<TranslatorFunResponse>(respString);
                 }
 
-                return response;
+                return Results.Ok(response);
             });
 
-            app.MapPost("/groot", async (TranslatorFunRequest request) =>
+            app.MapPost("/groot", async (
+                TranslatorFunRequest request,
+                IValidator<TranslatorFunRequest> validator) =>
             {
                 //TODO: adicionar uma comunicação com uma API para fazer o translate sempre pra o inglês
+
+                ValidationResult resultValidation = await validator.ValidateAsync(request);
+                if (!resultValidation.IsValid)
+                {
+                    return Results.ValidationProblem(resultValidation.ToDictionary());
+                }
+
                 HttpClient client = new HttpClient();
                 HttpResponseMessage resp = await client.PostAsJsonAsync("https://api.funtranslations.com/translate/groot", request);
                 string respString = resp.Content.ReadAsStringAsync().Result;
@@ -71,7 +85,7 @@ namespace Manageable_API.EndPoints
                     response = JsonSerializer.Deserialize<TranslatorFunResponse>(respString);
                 }
 
-                return response;
+                return Results.Ok(response);
             });
 
 
