@@ -11,7 +11,7 @@ namespace Application.Adapters
 {
     public class HttpAPIAdapter
     {
-        public static T MakePostRequest<T>(string urlApi, object request, int? timeout = null, long? cacheSize = null) where T : new()
+        public static T MakePostRequest<T>(string urlApi, object request, long? cacheSize = null, int? timeout = null) where T : new()
         {
             HttpClient client = new HttpClient();
             if(timeout != null)
