@@ -9,6 +9,7 @@ namespace Manageable_API.EndPoints
 {
     public class FunTranslationsEndPoints : CarterModule
     {
+        private readonly int _timeout = 5000; 
         public FunTranslationsEndPoints() : base("/translatorfun") { }
 
         public override void AddRoutes(IEndpointRouteBuilder app)
@@ -30,7 +31,7 @@ namespace Manageable_API.EndPoints
                 }
 
                 string urlAPI = "https://api.funtranslations.com/translate/mandalorian";
-                TranslatorFunResponse response = HttpAPIAdapter.MakePostRequest<TranslatorFunResponse>(urlAPI, request);
+                TranslatorFunResponse response = HttpAPIAdapter.MakePostRequest<TranslatorFunResponse>(urlAPI, request, timeout: _timeout);
 
                 return Results.Ok(response);
             });
@@ -46,7 +47,7 @@ namespace Manageable_API.EndPoints
                 }
 
                 string urlAPI = "https://api.funtranslations.com/translate/minion";
-                TranslatorFunResponse response = HttpAPIAdapter.MakePostRequest<TranslatorFunResponse>(urlAPI, request);
+                TranslatorFunResponse response = HttpAPIAdapter.MakePostRequest<TranslatorFunResponse>(urlAPI, request, timeout: _timeout);
 
                 return Results.Ok(response);
             });
@@ -62,7 +63,7 @@ namespace Manageable_API.EndPoints
                 }
 
                 string urlAPI = "https://api.funtranslations.com/translate/groot";
-                TranslatorFunResponse response = HttpAPIAdapter.MakePostRequest<TranslatorFunResponse>(urlAPI, request);
+                TranslatorFunResponse response = HttpAPIAdapter.MakePostRequest<TranslatorFunResponse>(urlAPI, request, timeout: _timeout);
 
                 return Results.Ok(response);
             });

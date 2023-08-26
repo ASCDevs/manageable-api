@@ -11,9 +11,17 @@ namespace Application.Adapters
 {
     public class HttpAPIAdapter
     {
-        public static T MakePostRequest<T>(string urlApi, object request) where T : new()
+        public static T MakePostRequest<T>(string urlApi, object request, int? timeout = null, long? cacheSize = null) where T : new()
         {
             HttpClient client = new HttpClient();
+            if(timeout != null)
+            {
+                client.Timeout = TimeSpan.FromMilliseconds(timeout.Value);
+            }
+            if(cacheSize != null)
+            {
+                client.MaxResponseContentBufferSize = cacheSize.Value;
+            }
             HttpResponseMessage HttpResp = client.PostAsJsonAsync(urlApi, request).Result;
             string respStr = HttpResp.Content.ReadAsStringAsync().Result;
             T response = new();
