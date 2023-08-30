@@ -2,6 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Cache;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -11,17 +14,28 @@ namespace Application.Adapters
 {
     public class HttpAPIAdapter
     {
-        public static T MakePostRequest<T>(string urlApi, object request, long? cacheSize = null, int? timeout = null) where T : new()
+
+        public static T PostRequest<T>(string urlApi, object request, long? reponseSize = null, int? timeout = null, long? cache = null) where T : new()
         {
             HttpClient client = new HttpClient();
-            if(timeout != null)
+            if (cache != null)
+            {
+                CacheControlHeaderValue cacheHeader = new CacheControlHeaderValue
+                {
+                    MaxAge = TimeSpan.FromSeconds(cache.Value),
+                };
+                client.DefaultRequestHeaders.CacheControl = cacheHeader;
+            }
+            
+            if (timeout != null)
             {
                 client.Timeout = TimeSpan.FromMilliseconds(timeout.Value);
             }
-            if(cacheSize != null)
+            if(reponseSize != null)
             {
-                client.MaxResponseContentBufferSize = cacheSize.Value;
+                client.MaxResponseContentBufferSize = reponseSize.Value; //number of bytes as long
             }
+
             HttpResponseMessage HttpResp = client.PostAsJsonAsync(urlApi, request).Result;
             string respStr = HttpResp.Content.ReadAsStringAsync().Result;
             T response = new();
@@ -32,5 +46,6 @@ namespace Application.Adapters
 
             return response;
         }
+
     }
 }
